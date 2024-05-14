@@ -1,0 +1,57 @@
+using System;
+using System.Text;
+
+class Program
+{
+    // จุดเริ่มต้นของโปรแกรม
+    static unsafe void Main()
+    {
+        // การกำหนดค่าให้กับอาร์เรย์ของไบต์
+        byte[] byteArray = { 0x12, 0x34, 0x56, 0x78 };
+        int number = 0;
+
+        // การตรึงพอยน์เตอร์ไปยังอาร์เรย์ของไบต์
+        fixed (byte* p = byteArray)
+        {
+            // ตัวอย่างการแปลงสตริงเป็นอาร์เรย์ของไบต์โดยใช้การเข้ารหัส UTF-8
+            byte[] ariaBytes = Encoding.UTF8.GetBytes("โดย: Aria จัดทำ ตามคำขอจาก BackSWV:");
+            Console.WriteLine($"ขนาดของ Aria คือ {ariaBytes.Length} ไบต์");
+
+            // การขยายอาร์เรย์ของไบต์ด้วยไบต์เพิ่มเติม
+            byte[] extendedAria = new byte[ariaBytes.Length + 4];
+            Array.Copy(ariaBytes, 0, extendedAria, 4, ariaBytes.Length);
+            Console.WriteLine($"ข้อมูลทั้งหมดของ Aria คือ: {BitConverter.ToString(extendedAria)}");
+            Console.WriteLine($"ความยาวของ Aria หลังจากเพิ่มไบต์เป็น {extendedAria.Length} ไบต์");
+
+            // การใช้พอยน์เตอร์เพื่ออ่านค่า int จากอาร์เรย์ของไบต์
+            byte* p2 = p;
+            number = *(int*)p2; // อ่าน 4 ไบต์เป็น int
+            Console.WriteLine("Number ก่อนการเลื่อนบิต: " + number);
+
+            // การเลื่อนบิตไปทางซ้าย
+            number = number << 2;
+            Console.WriteLine("Number หลังการเลื่อนบิตไปทางซ้าย: " + number);
+
+            // การเลื่อนบิตไปทางขวา
+            number = number >> 1;
+            Console.WriteLine("Number หลังการเลื่อนบิตไปทางขวา: " + number);
+
+            // การคัดลอกอาร์เรย์ของไบต์
+            byte[] copyArray = new byte[4];
+            Buffer.BlockCopy(byteArray, 0, copyArray, 0, 4);
+            Console.WriteLine("สำเนาของ byteArray: " + BitConverter.ToString(copyArray));
+
+            // การใช้ XOR กับค่า 0x0F
+            number = number ^ 0x0F;
+            Console.WriteLine("Number หลังการใช้ XOR กับ 0x0F: " + number);
+
+            // การแปลง int เป็น short (Int16)
+            short shortNumber = (short)number;
+            Console.WriteLine("Number ในรูปแบบ Int16: " + shortNumber);
+        }
+
+        // รอให้ผู้ใช้กดคีย์ก่อนจะปิดโปรแกรม
+        Console.WriteLine("กดคีย์ใดก็ได้เพื่อดำเนินการต่อ...");
+        Console.ReadKey();
+    }
+}
